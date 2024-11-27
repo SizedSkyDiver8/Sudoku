@@ -1,0 +1,224 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  position: relative;
+}
+
+html,
+body {
+  height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+@media (min-width: 500px) {
+  body {
+    height: 100vh;
+  }
+}
+
+html {
+  color: #fff;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gameBoard {
+  border: 5px solid purple !important;
+  height: 639px;
+  width: 639px;
+  background-color: #fff;
+}
+
+.row {
+  width: 100%;
+  height: 70px;
+  display: flex;
+}
+.col {
+  width: 70px;
+  height: 100%;
+  border: 1px solid black;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  display: flex;
+}
+span {
+  color: #000;
+  font-size: xx-large;
+}
+
+.gameBoard,
+.row,
+.col {
+  box-sizing: border-box;
+}
+
+.col2,
+.col5 {
+  border-right: 5px solid purple !important;
+}
+
+.row2,
+.row5 {
+  border-bottom: 5px solid purple !important;
+}
+
+.headerGame {
+  position: absolute;
+  top: 20px;
+  font-size: 150px;
+}
+
+@media (max-height: 800px) {
+  .gameBoard {
+    border: 1px solid purple;
+    height: 458px;
+    width: 450px;
+    background-color: #fff;
+    margin-top: -40px;
+  }
+  .row {
+    width: 100%;
+    height: 50px;
+    display: flex;
+  }
+  .headerGame {
+    position: absolute;
+    font-size: 45px;
+    margin-top: 0;
+  }
+  span {
+    color: #000;
+    font-size: larger;
+  }
+  .divCards div {
+    background-color: white;
+    width: calc(100% / 16) !important;
+    height: 75%;
+    margin: 10px;
+    display: flex;
+    font-size: larger;
+  }
+  .heartDiv img {
+    height: 80px !important;
+  }
+}
+
+.gameBoard div :hover {
+  background-color: #6477e2;
+  cursor: pointer;
+}
+
+.highlight {
+  background-color: yellow;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.divCards {
+  height: calc(100% / 10);
+  margin-top: 15px;
+  color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  flex-wrap: wrap;
+}
+
+.divCards div {
+  background-color: white;
+  width: calc(100% / 13);
+  height: 75%;
+  margin: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: xx-large;
+  position: relative;
+  transition: top 0.3s;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 10px;
+}
+
+.divCards div:hover {
+  transform: scale(1.15);
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+  background-color: white;
+}
+
+.numberHover {
+  transform: scale(1.5);
+}
+
+.numberHoverDone {
+  visibility: hidden;
+}
+
+.wrongCell {
+  background-color: red;
+  animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.heartDiv {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 5px;
+}
+
+.heartDiv img {
+  height: 100px;
+}
+
+.grayImg {
+  filter: grayscale(100%);
+}
+
+.timerDiv {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 5px solid rgb(126, 96, 192);
+  height: 150px;
+  width: 300px;
+  border-radius: 10px;
+  margin: 10px;
+}
+
+.timerDiv span {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 50%;
+  font-size: 75px;
+  color: rgb(126, 96, 192);
+}

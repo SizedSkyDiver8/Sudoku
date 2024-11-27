@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import BIRDS from "vanta/src/vanta.birds";
 import Game from "./Game";
 import * as THREE from "three";
+import HomePage from "./HomePage";
 window.THREE = THREE; // Make THREE available globally for Vanta.js
 
 function App() {
@@ -51,7 +52,8 @@ function App() {
           alignItems: "center",
         }}
       >
-        <Game />
+        <HomePage/>
+        {/* <Game /> */}
       </div>
     </div>
   );
@@ -119,4 +121,3 @@ export default App;
 // }
 
 // export default App;
-

@@ -3,6 +3,7 @@ import BIRDS from "vanta/src/vanta.birds";
 import Game from "./Game";
 import * as THREE from "three";
 import HomePage from "./HomePage";
+import CheckAPI from "./CheckAPI"
 window.THREE = THREE; // Make THREE available globally for Vanta.js
 
 function App() {
@@ -53,7 +54,8 @@ function App() {
           alignItems: "center",
         }}
       >
-        {level == 0 ? <HomePage level={setLevel} /> : <Game level={level} />}
+        <CheckAPI/>
+        {/* {level == 0 ? <HomePage level={setLevel} /> : <Game level={level} />} */}
       </div>
     </div>
   );

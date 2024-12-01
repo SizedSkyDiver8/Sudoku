@@ -32,10 +32,16 @@ body {
 }
 
 .gameBoard {
-  border: 5px solid purple !important;
+  border: 5px solid transparent;
+  background: linear-gradient(90deg, #e6abff, #6dc7ff, #c822ff, #1a6dff)
+      border-box,
+    /* Gradient border */ #fff; /* White board background */
+  background-clip: border-box;
   height: 639px;
   width: 639px;
-  background-color: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  box-sizing: border-box;
 }
 
 .row {
@@ -43,6 +49,7 @@ body {
   height: 70px;
   display: flex;
 }
+
 .col {
   width: 70px;
   height: 100%;
@@ -51,26 +58,50 @@ body {
   align-items: center;
   text-align: center;
   display: flex;
+  background-color: #fff;
 }
+
 span {
   color: #000;
   font-size: xx-large;
+}
+
+.col2,
+.col5 {
+  position: relative;
+}
+
+.col2::after,
+.col5::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 5px;
+  background: linear-gradient(90deg, #e6abff, #6dc7ff, #c822ff, #1a6dff);
+}
+
+.row2,
+.row5 {
+  position: relative;
+}
+
+.row2::after,
+.row5::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #e6abff, #6dc7ff, #c822ff, #1a6dff);
 }
 
 .gameBoard,
 .row,
 .col {
   box-sizing: border-box;
-}
-
-.col2,
-.col5 {
-  border-right: 5px solid purple !important;
-}
-
-.row2,
-.row5 {
-  border-bottom: 5px solid purple !important;
 }
 
 .headerGame {
@@ -81,7 +112,9 @@ span {
 
 @media (max-height: 800px) {
   .gameBoard {
-    border: 1px solid purple;
+    border: 1px solid transparent; /* Fallback for older browsers */
+    background: linear-gradient(90deg, #e6abff, #6dc7ff, #c822ff, #1a6dff);
+
     height: 458px;
     width: 450px;
     background-color: #fff;
@@ -218,9 +251,14 @@ span {
 }
 
 .timer {
-  border: 5px solid rgb(126, 96, 192);
+  border: 5px solid transparent;
+  background: linear-gradient(90deg, #e6abff, #6dc7ff, #c822ff, #1a6dff);
+  background-clip: border-box;
   font-size: 75px;
-  color: rgb(126, 96, 192);
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   line-height: 1;
   height: 100%;
   width: 350px;

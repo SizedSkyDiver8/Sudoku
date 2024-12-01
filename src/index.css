@@ -207,36 +207,32 @@ span {
   position: absolute;
   top: 0;
   left: 0;
-  border: 5px solid rgb(126, 96, 192);
   height: 150px;
-  width: 300px;
+  width: 400px;
   border-radius: 10px;
   margin: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
 }
 
-.timerDiv span {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  left: 50%;
-  top: 50%;
+.timer {
+  border: 5px solid rgb(126, 96, 192);
   font-size: 75px;
   color: rgb(126, 96, 192);
-}
-
-/* .homePageDiv {
-  flex-direction: column;
+  line-height: 1;
+  height: 100%;
+  width: 350px;
+  display: flex;
   justify-content: center;
   align-items: center;
-  position: absolute;
-  height: 500px;
-  width: 700px;
 }
 
-.detailsInstruction {
-  position: absolute;
-  align-items: center;
-  justify-content: center;
-} */
+.startPause {
+  margin-left: 15px;
+  height: 100px;
+}
 
 .homePageDiv {
   display: flex;

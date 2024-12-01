@@ -15,7 +15,7 @@ export default function Game({ level }) {
   const [arrayNumbers, setArrayNumbers] = useState([]); // Array to track numbers used
   const [wrongCells, setWrongCells] = useState([]); // List of cells with wrong moves
   const [mistakes, setMistakes] = useState(3);
-  const [startTimer, setStartTimer] = useState(false);
+  const [startTimer, setStartTimer] = useState(true);
 
   // Initializes the game board by filling it and removing numbers
   const initialize = () => {
@@ -187,7 +187,7 @@ export default function Game({ level }) {
   return (
     <>
       <h1 className="headerGame">Sudoku</h1>
-      <Timer start={startTimer} />
+      <Timer />
       <Hearts mistakeCounter={mistakes} />
       <div className="gameBoard">
         {board.map((row, rowIndex) => (

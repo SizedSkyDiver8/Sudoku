@@ -4,7 +4,7 @@ import Hearts from "./Hearts";
 import NumberCards from "./NumberCards";
 import Timer from "./Timer";
 
-export default function Game() {
+export default function Game({ level }) {
   const [board, setBoard] = useState(
     Array.from({ length: 9 }, () => Array(9).fill(0))
   );
@@ -49,10 +49,9 @@ export default function Game() {
 
   // Removes numbers from the filled board to create the puzzle
   const removeNumbers = (array) => {
-    let number = 20; // Number of cells to remove
     let count = 0;
     const arrayNumberCount = Array(9).fill(9); // Initial count for each number
-    while (count <= number) {
+    while (count <= level) {
       let row = Math.floor(Math.random() * 9);
       let col = Math.floor(Math.random() * 9);
       if (array[row][col] !== null) {

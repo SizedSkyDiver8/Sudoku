@@ -283,7 +283,7 @@ details ul {
 }
 
 .homePageDiv span {
-  color: #c0c8f4;
+  color: #fcfcfc;
 }
 
 ul {
@@ -312,4 +312,18 @@ ul {
 
 .headerImg img {
   height: 150px;
+}
+
+.levelsDiv {
+  display: flex;
+  gap: 10px;
+}
+
+.levels h2 {
+  font-size: xx-large;
+}
+
+.levelsDiv span {
+  border: 3px solid rgb(133, 120, 231);
+  padding: 5px;
 }

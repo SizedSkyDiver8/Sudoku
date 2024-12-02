@@ -54,8 +54,8 @@ function App() {
           alignItems: "center",
         }}
       >
-        <CheckAPI/>
-        {/* {level == 0 ? <HomePage level={setLevel} /> : <Game level={level} />} */}
+        {/* <CheckAPI/> */}
+        {level == 0 ? <HomePage level={setLevel} /> : <Game level={level} />}
       </div>
     </div>
   );

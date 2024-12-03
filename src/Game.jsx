@@ -3,6 +3,7 @@ import heart from "../src/assets/red-heart-pixel.png";
 import Hearts from "./Hearts";
 import NumberCards from "./NumberCards";
 import Timer from "./Timer";
+import SideBar from "./SideBar";
 
 export default function Game({ level }) {
   const [board, setBoard] = useState(
@@ -16,6 +17,8 @@ export default function Game({ level }) {
   const [wrongCells, setWrongCells] = useState([]); // List of cells with wrong moves
   const [mistakes, setMistakes] = useState(3);
   const [startTimer, setStartTimer] = useState(true);
+  const [pencil, setPencil] = useState(false);
+  const [pencilArray, setPencilArray] = useState(Array(81).fill([]));
 
   // Initializes the game board by filling it and removing numbers
   const initialize = () => {
@@ -129,13 +132,33 @@ export default function Game({ level }) {
       const [row, col] = args;
       const newArray = [...board.map((row) => [...row])];
       newArray[row][col] = chosenNumber;
-      // Check if the move is valid or invalid
+      // Checks if the player is in pencil mode
+      if (pencil) {
+        if (checkMove(newArray, row, col, chosenNumber)) {
+          setPencilArray((prev) => {
+            const pencilTemp = [...prev]; // Copy the current state
+            const index = row * 9 + col;
+            if (!pencilTemp[index].includes(chosenNumber)) {
+              pencilTemp[index] = [...pencilTemp[index], chosenNumber];
+            } else {
+              pencilTemp[index] = pencilTemp[index].filter(
+                (num) => num !== chosenNumber
+              );
+            }
+            return pencilTemp;
+          });
+        }
+        setHighlightedCells([]);
+        setHighlightValue(null);
+        setChosenNumber(null);
+        return;
+      }
+
       if (checkMove(newArray, row, col, chosenNumber)) {
         const arrayNumberIncrease = [...arrayNumbers];
         arrayNumberIncrease[chosenNumber - 1]++;
         setArrayNumbers(arrayNumberIncrease);
         setBoard(newArray);
-        // Remove cell from wrongCells if it exists
         if (wrongCells.includes(`${row}-${col}`)) {
           const updatedWrongCells = [...wrongCells];
           const index = updatedWrongCells.indexOf(`${row}-${col}`);
@@ -144,7 +167,6 @@ export default function Game({ level }) {
         }
       } else {
         setBoard(newArray);
-        // Add cell to wrongCells if not already present
         if (!wrongCells.includes(`${row}-${col}`)) {
           setWrongCells([...wrongCells, `${row}-${col}`]);
           setMistakes((prevMistake) => prevMistake - 1);
@@ -155,6 +177,45 @@ export default function Game({ level }) {
       setChosenNumber(null);
     }
   };
+  /////////////////////////////////////////////////////////////////////////////////
+  // const clickedCell = (...args) => {
+  //   if (args.length === 1) {
+  //     const [value] = args;
+  //     if (value !== null) {
+  //       setHighlightValue(value);
+  //       highlightCell();
+  //     } else {
+  //       setHighlightedCells([]);
+  //       setHighlightValue(null);
+  //     }
+  //   } else if (args.length === 2) {
+  //     const [row, col] = args;
+  //     const newArray = [...board.map((row) => [...row])];
+  //     newArray[row][col] = chosenNumber;
+  //     if (checkMove(newArray, row, col, chosenNumber)) {
+  //       const arrayNumberIncrease = [...arrayNumbers];
+  //       arrayNumberIncrease[chosenNumber - 1]++;
+  //       setArrayNumbers(arrayNumberIncrease);
+  //       setBoard(newArray);
+  //       if (wrongCells.includes(`${row}-${col}`)) {
+  //         const updatedWrongCells = [...wrongCells];
+  //         const index = updatedWrongCells.indexOf(`${row}-${col}`);
+  //         updatedWrongCells.splice(index, 1);
+  //         setWrongCells(updatedWrongCells);
+  //       }
+  //     } else {
+  //       setBoard(newArray);
+  //       if (!wrongCells.includes(`${row}-${col}`)) {
+  //         setWrongCells([...wrongCells, `${row}-${col}`]);
+  //         setMistakes((prevMistake) => prevMistake - 1);
+  //       }
+  //     }
+  //     setHighlightedCells([]);
+  //     setHighlightValue(null);
+  //     setChosenNumber(null);
+  //   }
+  // };
+  /////////////////////////////////////////////////////////////////////////
 
   // Resets highlights and chosen number on outside clicks
   useEffect(() => {
@@ -187,52 +248,56 @@ export default function Game({ level }) {
   return (
     <>
       <h1 className="headerGame">Sudoku</h1>
-      <Timer />
+      <Timer timerStarts={startTimer} pauseStartTimer={setStartTimer} />
       <Hearts mistakeCounter={mistakes} />
-      <div className="gameBoard">
-        {board.map((row, rowIndex) => (
-          <div className={`row row${rowIndex}`} key={rowIndex}>
-            {row.map((value, colIndex) => (
-              <div
-                className={`col col${colIndex}
+      {startTimer && <SideBar pencilValue={pencil} pencilChange={setPencil} />}
+      {startTimer && (
+        <div className="gameBoard">
+          {board.map((row, rowIndex) => (
+            <div className={`row row${rowIndex}`} key={rowIndex}>
+              {row.map((value, colIndex) => (
+                <div
+                  className={`col col${colIndex}
               ${
                 highlightedCells.includes(`${rowIndex}-${colIndex}`)
                   ? "highlight"
                   : ""
               } ${
-                  wrongCells.includes(`${rowIndex}-${colIndex}`)
-                    ? "wrongCell"
-                    : ""
-                }`}
-                key={colIndex}
-                onClick={() => {
-                  if (
-                    (value === null && chosenNumber !== null) ||
-                    (chosenNumber !== null &&
-                      wrongCells.includes(`${rowIndex}-${colIndex}`))
-                  ) {
-                    clickedCell(rowIndex, colIndex);
-                  } else if (
-                    value !== null &&
-                    !wrongCells.includes(`${rowIndex}-${colIndex}`)
-                  ) {
-                    clickedCell(value);
-                  } else {
-                    clickedCell(null);
-                  }
-                }}
-              >
-                <span>{value}</span>
-              </div>
-            ))}
-          </div>
-        ))}
-        <NumberCards
-          usedNumbers={arrayNumbers}
-          onNumberSelect={setChosenNumber}
-          selectedNumber={chosenNumber}
-        />
-      </div>
+                    wrongCells.includes(`${rowIndex}-${colIndex}`)
+                      ? "wrongCell"
+                      : ""
+                  }`}
+                  key={colIndex}
+                  onClick={() => {
+                    if (
+                      (value === null && chosenNumber !== null) ||
+                      (chosenNumber !== null &&
+                        wrongCells.includes(`${rowIndex}-${colIndex}`))
+                    ) {
+                      clickedCell(rowIndex, colIndex);
+                    } else if (
+                      value !== null &&
+                      !wrongCells.includes(`${rowIndex}-${colIndex}`)
+                    ) {
+                      clickedCell(value);
+                    } else {
+                      clickedCell(null);
+                    }
+                  }}
+                >
+                  <span>{value}</span>
+                </div>
+              ))}
+            </div>
+          ))}
+          <NumberCards
+            usedNumbers={arrayNumbers}
+            onNumberSelect={setChosenNumber}
+            selectedNumber={chosenNumber}
+            pencilValue={pencil}
+          />
+        </div>
+      )}
     </>
   );
 }

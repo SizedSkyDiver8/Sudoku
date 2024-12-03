@@ -2,13 +2,12 @@ import React, { useEffect, useState } from "react";
 import pause from "./assets/pause.png";
 import play from "./assets/play.png";
 
-export default function Timer() {
-  const [startStop, setStartStop] = useState(true);
+export default function Timer({ timerStarts, pauseStartTimer }) {
   const [time, setTime] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
 
   useEffect(() => {
-    if (startStop) {
+    if (timerStarts) {
       const interval = setInterval(() => {
         setTime((prevTime) => prevTime + 1);
       }, 1000);
@@ -16,7 +15,7 @@ export default function Timer() {
     }
 
     return () => clearInterval(intervalId); // Cleanup on unmount
-  }, [startStop]);
+  }, [timerStarts]);
 
   const timeFunc = () => {
     const minutes = Math.floor(time / 60)
@@ -28,11 +27,11 @@ export default function Timer() {
 
   const stopTimer = () => {
     if (intervalId) {
-      setStartStop(false);
+      pauseStartTimer(false);
       clearInterval(intervalId); // Stops the interval
       setIntervalId(null); // Prevents future actions
     } else {
-      setStartStop(true);
+      pauseStartTimer(true);
     }
   };
 
@@ -41,7 +40,7 @@ export default function Timer() {
       <div className="timer">{timeFunc()}</div>
       <img
         className="startPause"
-        src={startStop ? pause : play}
+        src={timerStarts ? pause : play}
         alt="Pause Icon"
         onClick={stopTimer} // Stops the timer on click
       />

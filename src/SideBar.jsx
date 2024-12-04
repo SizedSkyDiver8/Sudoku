@@ -18,8 +18,6 @@ export default function SideBar({
     if (hintValue > 0) {
       changeHintCount((prev) => prev - 1);
       changeHint(true);
-    } else {
-      alert("no hints left");
     }
   };
 
@@ -41,7 +39,7 @@ export default function SideBar({
       </div>
       <div>
         <img src={lightBulb} onClick={() => hintFunc()} />
-        <span>hint</span>
+        <span>{`hint (${hintValue})`}</span>
       </div>
       <div>
         <img src={pencilIcon} />

@@ -193,8 +193,58 @@ export default function Game({ level }) {
     }
   };
 
-  //Hint Function
-  const hintFunc = () => {};
+  //Hint backtracking function
+  const hintBackTracking = (array) => {
+    const optionsNumber = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    for (let row = 0; row < 9; row++) {
+      for (let col = 0; col < 9; col++) {
+        if (array[row][col] == null) {
+          for (let number of optionsNumber) {
+            if (checkMove(array, row, col, number)) {
+              array[row][col] = number;
+
+              if (hintBackTracking(array)) {
+                return true;
+              }
+            }
+            array[row][col] = null;
+          }
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  // Player presses the hint button
+  useEffect(() => {
+    if (hint) {
+      let row = null;
+      let col = null;
+      while (row === null || col === null || board[row][col] === null) {
+        row = Math.floor(Math.random() * 10);
+        col = Math.floor(Math.random() * 10);
+        if (board[row][col] == null) {
+          break;
+        }
+      }
+      const boardArray = JSON.parse(JSON.stringify(board));
+      const optionsNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+      for (let number of optionsNumbers) {
+        if (checkMove(boardArray, row, col, number)) {
+          boardArray[row][col] = number;
+          if (hintBackTracking(boardArray)) {
+            const finalBoard = [...board];
+            finalBoard[row][col] = number;
+            setBoard(finalBoard);
+            setHint(false);
+            break;
+          }
+        }
+        boardArray[row][col] = null;
+      }
+    }
+  }, [hint]);
 
   // Resets highlights and chosen number on outside clicks
   useEffect(() => {
@@ -223,12 +273,6 @@ export default function Game({ level }) {
   useEffect(() => {
     initialize();
   }, []);
-
-  // Player presses the hint button
-  useEffect(() => {
-    hintFunc();
-    setHint(false);
-  }, [hint]);
 
   return (
     <>
@@ -313,6 +357,7 @@ export default function Game({ level }) {
             usedNumbers={arrayNumbers}
             onNumberSelect={setChosenNumber}
             selectedNumber={chosenNumber}
+            pencilValue={pencil}
           />
         </div>
       )}

@@ -461,3 +461,8 @@ li {
   font-size: 0.8rem;
   color: #000;
 }
+
+.headerInstruction,
+.headerLevels {
+  text-decoration: underline;
+}

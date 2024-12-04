@@ -3,8 +3,26 @@ import pencilIcon from "./assets/pencil.png";
 import cancelPencil from "./assets/cancel-pencil.png";
 import eraser from "./assets/eraser.png";
 import lightBulb from "./assets/light-bulb.png";
+import eraserOn from "./assets/eraserON.png";
 
-export default function SideBar({ pencilValue, pencilChange }) {
+export default function SideBar({
+  pencilValue,
+  pencilChange,
+  eraserValue,
+  eraserChange,
+  changeHint,
+  hintValue,
+  changeHintCount,
+}) {
+  const hintFunc = () => {
+    if (hintValue > 0) {
+      changeHintCount((prev) => prev - 1);
+      changeHint(true);
+    } else {
+      alert("no hints left");
+    }
+  };
+
   return (
     <div className="sideBar">
       <div>
@@ -15,11 +33,14 @@ export default function SideBar({ pencilValue, pencilChange }) {
         <span>pencil</span>
       </div>
       <div>
-        <img src={eraser} />
-        <span>eraser</span>
+        <img
+          src={eraserValue ? eraserOn : eraser}
+          onClick={() => eraserChange((prev) => !prev)}
+        />
+        <span>{eraserValue ? "eraser(ON)" : "eraser(OFF)"}</span>
       </div>
       <div>
-        <img src={lightBulb} />
+        <img src={lightBulb} onClick={() => hintFunc()} />
         <span>hint</span>
       </div>
       <div>

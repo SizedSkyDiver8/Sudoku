@@ -152,6 +152,11 @@ span {
   .heartDiv img {
     height: 80px !important;
   }
+  details p,
+  details li {
+    margin-left: 20px;
+    font-size: 15px !important;
+  }
 }
 
 .gameBoard div :hover {
@@ -163,8 +168,6 @@ span {
   background-color: yellow;
   transition: background-color 0.3s ease-in-out;
 }
-
-/* //////////////////////////////////////////////////////////////////////////// */
 
 .divCards,
 .divCardsPencilOn {
@@ -289,8 +292,9 @@ span {
   margin-left: 15px;
   height: 100px;
 }
-
+/* ///////////////////////////////////////////////////////////////// */
 .homePageDiv {
+  background-color: #3b2657;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -300,6 +304,7 @@ span {
   padding: 20px;
   max-width: 800px;
   border-radius: 10px;
+  max-height: 100vh;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -330,10 +335,10 @@ summary {
   cursor: pointer;
 }
 
-details p,
-details ul {
+.detailsP,
+details li {
   margin-left: 20px;
-  font-size: 15px;
+  font-size: 25px;
 }
 
 .homePageDiv span {
@@ -395,37 +400,18 @@ li {
   font-size: x-large;
 }
 
-/* .sideBar {
-  border: 5px solid transparent;
-  height: 500px;
-  width: 150px;
-  position: absolute;
-  right: 250px;
-  border-radius: 50px;
-  background: linear-gradient(90deg, #e6abff, #6dc7ff, #c822ff, #1a6dff);
-  background-clip: content-box;
-}
-
-.sideBar div {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-  flex-direction: column;
-} */
-
 .sideBar {
   position: absolute;
   right: 250px;
   height: 470px;
   width: 150px;
   border-radius: 50px;
-  background: transparent; /* Background for inner content */
-  z-index: 1; /* Ensures content appears above the border */
-  overflow: hidden; /* To ensure no visual artifacts from the pseudo-element */
+  background: transparent;
+  z-index: 1;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: space-around; /* Space between the items */
+  justify-content: space-around;
   align-items: center;
 }
 
@@ -458,4 +444,20 @@ li {
   color: #c822ff;
   padding: 5%;
   font-weight: bold;
+}
+
+.pencilGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 100%;
+  height: 100%;
+}
+
+.pencilCell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #000;
 }

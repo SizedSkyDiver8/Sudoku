@@ -88,7 +88,7 @@ export default function HomePage({ level }) {
             aria-expanded={expand === summary}
           >
             <summary>{summary}</summary>
-            <p>{content}</p>
+            <p className="detailsP">{content}</p>
           </details>
         ))}
       </div>

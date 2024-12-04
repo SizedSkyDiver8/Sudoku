@@ -19,6 +19,9 @@ export default function Game({ level }) {
   const [startTimer, setStartTimer] = useState(true);
   const [pencil, setPencil] = useState(false);
   const [pencilArray, setPencilArray] = useState(Array(81).fill([]));
+  const [eraser, setEraser] = useState(false);
+  const [hint, setHint] = useState(false);
+  const [hintCount, setHintCount] = useState(3);
 
   // Initializes the game board by filling it and removing numbers
   const initialize = () => {
@@ -132,6 +135,19 @@ export default function Game({ level }) {
       const [row, col] = args;
       const newArray = [...board.map((row) => [...row])];
       newArray[row][col] = chosenNumber;
+      // Checks if erase is on
+      if (eraser) {
+        if (wrongCells.includes(`${row}-${col}`)) {
+          const updatedWrongCells = [...wrongCells];
+          const index = updatedWrongCells.indexOf(`${row}-${col}`);
+          updatedWrongCells.splice(index, 1);
+          setWrongCells(updatedWrongCells);
+          newArray[row][col] = null;
+          setBoard(newArray);
+        }
+        setEraser(false);
+        return;
+      }
       // Checks if the player is in pencil mode
       if (pencil) {
         if (checkMove(newArray, row, col, chosenNumber)) {
@@ -153,7 +169,6 @@ export default function Game({ level }) {
         setChosenNumber(null);
         return;
       }
-
       if (checkMove(newArray, row, col, chosenNumber)) {
         const arrayNumberIncrease = [...arrayNumbers];
         arrayNumberIncrease[chosenNumber - 1]++;
@@ -177,45 +192,9 @@ export default function Game({ level }) {
       setChosenNumber(null);
     }
   };
-  /////////////////////////////////////////////////////////////////////////////////
-  // const clickedCell = (...args) => {
-  //   if (args.length === 1) {
-  //     const [value] = args;
-  //     if (value !== null) {
-  //       setHighlightValue(value);
-  //       highlightCell();
-  //     } else {
-  //       setHighlightedCells([]);
-  //       setHighlightValue(null);
-  //     }
-  //   } else if (args.length === 2) {
-  //     const [row, col] = args;
-  //     const newArray = [...board.map((row) => [...row])];
-  //     newArray[row][col] = chosenNumber;
-  //     if (checkMove(newArray, row, col, chosenNumber)) {
-  //       const arrayNumberIncrease = [...arrayNumbers];
-  //       arrayNumberIncrease[chosenNumber - 1]++;
-  //       setArrayNumbers(arrayNumberIncrease);
-  //       setBoard(newArray);
-  //       if (wrongCells.includes(`${row}-${col}`)) {
-  //         const updatedWrongCells = [...wrongCells];
-  //         const index = updatedWrongCells.indexOf(`${row}-${col}`);
-  //         updatedWrongCells.splice(index, 1);
-  //         setWrongCells(updatedWrongCells);
-  //       }
-  //     } else {
-  //       setBoard(newArray);
-  //       if (!wrongCells.includes(`${row}-${col}`)) {
-  //         setWrongCells([...wrongCells, `${row}-${col}`]);
-  //         setMistakes((prevMistake) => prevMistake - 1);
-  //       }
-  //     }
-  //     setHighlightedCells([]);
-  //     setHighlightValue(null);
-  //     setChosenNumber(null);
-  //   }
-  // };
-  /////////////////////////////////////////////////////////////////////////
+
+  //Hint Function
+  const hintFunc = () => {};
 
   // Resets highlights and chosen number on outside clicks
   useEffect(() => {
@@ -245,12 +224,28 @@ export default function Game({ level }) {
     initialize();
   }, []);
 
+  // Player presses the hint button
+  useEffect(() => {
+    hintFunc();
+    setHint(false);
+  }, [hint]);
+
   return (
     <>
       <h1 className="headerGame">Sudoku</h1>
       <Timer timerStarts={startTimer} pauseStartTimer={setStartTimer} />
       <Hearts mistakeCounter={mistakes} />
-      {startTimer && <SideBar pencilValue={pencil} pencilChange={setPencil} />}
+      {startTimer && (
+        <SideBar
+          pencilValue={pencil}
+          pencilChange={setPencil}
+          eraserValue={eraser}
+          eraserChange={setEraser}
+          changeHint={setHint}
+          hintValue={hintCount}
+          changeHintCount={setHintCount}
+        />
+      )}
       {startTimer && (
         <div className="gameBoard">
           {board.map((row, rowIndex) => (
@@ -272,7 +267,8 @@ export default function Game({ level }) {
                     if (
                       (value === null && chosenNumber !== null) ||
                       (chosenNumber !== null &&
-                        wrongCells.includes(`${rowIndex}-${colIndex}`))
+                        wrongCells.includes(`${rowIndex}-${colIndex}`)) ||
+                      eraser
                     ) {
                       clickedCell(rowIndex, colIndex);
                     } else if (
@@ -285,7 +281,30 @@ export default function Game({ level }) {
                     }
                   }}
                 >
-                  <span>{value}</span>
+                  {value !== null ? (
+                    <span>{value}</span>
+                  ) : (
+                    <div className="pencilGrid">
+                      {Array.from({ length: 3 }, (_, subRow) =>
+                        Array.from({ length: 3 }, (_, subCol) => {
+                          const subIndex = subRow * 3 + subCol;
+                          const pencilValue = pencilArray[
+                            rowIndex * 9 + colIndex
+                          ]?.includes(subIndex + 1)
+                            ? subIndex + 1
+                            : "";
+                          return (
+                            <div
+                              key={`${subRow}-${subCol}`}
+                              className={`pencilCell pencilCell${pencilValue}`}
+                            >
+                              {pencilValue}
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -294,7 +313,6 @@ export default function Game({ level }) {
             usedNumbers={arrayNumbers}
             onNumberSelect={setChosenNumber}
             selectedNumber={chosenNumber}
-            pencilValue={pencil}
           />
         </div>
       )}

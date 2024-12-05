@@ -4,6 +4,7 @@ import cancelPencil from "./assets/cancel-pencil.png";
 import eraser from "./assets/eraser.png";
 import lightBulb from "./assets/light-bulb.png";
 import eraserOn from "./assets/eraserON.png";
+import fastPecil from "./assets/fast-pencil.png";
 
 export default function SideBar({
   pencilValue,
@@ -13,6 +14,7 @@ export default function SideBar({
   changeHint,
   hintValue,
   changeHintCount,
+  changeFastPencil,
 }) {
   const hintFunc = () => {
     if (hintValue > 0) {
@@ -35,15 +37,18 @@ export default function SideBar({
           src={eraserValue ? eraserOn : eraser}
           onClick={() => eraserChange((prev) => !prev)}
         />
-        <span>{eraserValue ? "eraser(ON)" : "eraser(OFF)"}</span>
+        <span>{eraserValue ? "eraser (ON)" : "eraser (OFF)"}</span>
       </div>
       <div>
         <img src={lightBulb} onClick={() => hintFunc()} />
         <span>{`hint (${hintValue})`}</span>
       </div>
       <div>
-        <img src={pencilIcon} />
-        <span>pencil</span>
+        <img
+          src={fastPecil}
+          onClick={() => changeFastPencil((prev) => !prev)}
+        />
+        <span>fast pencil</span>
       </div>
     </div>
   );

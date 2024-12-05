@@ -435,14 +435,13 @@ li {
   justify-content: center;
   align-items: center;
   margin-top: 15px;
-  margin-bottom: 15px;
   flex-direction: column;
 }
 
 .sideBar div > span {
   font-size: 15px;
   color: #c822ff;
-  padding: 5%;
+  padding: 5px;
   font-weight: bold;
 }
 

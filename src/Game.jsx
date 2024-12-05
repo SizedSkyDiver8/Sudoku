@@ -22,6 +22,8 @@ export default function Game({ level }) {
   const [eraser, setEraser] = useState(false);
   const [hint, setHint] = useState(false);
   const [hintCount, setHintCount] = useState(3);
+  const [fastPencil, setFastPencil] = useState(false);
+  const [fastPencilArray, setFastPencilArray] = useState(Array(81).fill([]));
 
   // Initializes the game board by filling it and removing numbers
   const initialize = () => {
@@ -96,10 +98,10 @@ export default function Game({ level }) {
       if (
         (!wrongCells.includes(`${row}-${i}`) &&
           array[row][i] === number &&
-          i !== col) || // Check row
+          i !== col) ||
         (!wrongCells.includes(`${i}-${col}`) &&
           array[i][col] === number &&
-          i !== row) // Check column
+          i !== row)
       ) {
         return false;
       }
@@ -120,6 +122,35 @@ export default function Game({ level }) {
     return true;
   };
 
+  // Handled eraser functionality
+  const handleEraser = (newArray, row, col) => {
+    if (wrongCells.includes(`${row}-${col}`)) {
+      const updatedWrongCells = [...wrongCells];
+      const index = updatedWrongCells.indexOf(`${row}-${col}`);
+      updatedWrongCells.splice(index, 1);
+      setWrongCells(updatedWrongCells);
+      newArray[row][col] = null;
+      setBoard(newArray);
+    }
+    setEraser(false);
+  };
+
+  // Handled pencil functionality
+  const handlePencil = (row, col) => {
+    setPencilArray((prev) => {
+      const pencilTemp = [...prev];
+      const index = row * 9 + col;
+      if (!pencilTemp[index].includes(chosenNumber)) {
+        pencilTemp[index] = [...pencilTemp[index], chosenNumber];
+      } else {
+        pencilTemp[index] = pencilTemp[index].filter(
+          (num) => num !== chosenNumber
+        );
+      }
+      return pencilTemp;
+    });
+  };
+
   // Handles cell clicks, updating highlights or placing a number
   const clickedCell = (...args) => {
     if (args.length === 1) {
@@ -137,39 +168,22 @@ export default function Game({ level }) {
       newArray[row][col] = chosenNumber;
       // Checks if erase is on
       if (eraser) {
-        if (wrongCells.includes(`${row}-${col}`)) {
-          const updatedWrongCells = [...wrongCells];
-          const index = updatedWrongCells.indexOf(`${row}-${col}`);
-          updatedWrongCells.splice(index, 1);
-          setWrongCells(updatedWrongCells);
-          newArray[row][col] = null;
-          setBoard(newArray);
-        }
-        setEraser(false);
+        handleEraser(newArray, row, col);
         return;
       }
       // Checks if the player is in pencil mode
       if (pencil) {
         if (checkMove(newArray, row, col, chosenNumber)) {
-          setPencilArray((prev) => {
-            const pencilTemp = [...prev]; // Copy the current state
-            const index = row * 9 + col;
-            if (!pencilTemp[index].includes(chosenNumber)) {
-              pencilTemp[index] = [...pencilTemp[index], chosenNumber];
-            } else {
-              pencilTemp[index] = pencilTemp[index].filter(
-                (num) => num !== chosenNumber
-              );
-            }
-            return pencilTemp;
-          });
+          handlePencil(row, col);
         }
-        setHighlightedCells([]);
-        setHighlightValue(null);
-        setChosenNumber(null);
         return;
       }
-      if (checkMove(newArray, row, col, chosenNumber)) {
+      //Enter number into cell
+      const copyArray = JSON.parse(JSON.stringify(newArray));
+      if (
+        checkMove(newArray, row, col, chosenNumber) &&
+        backTracking(copyArray)
+      ) {
         const arrayNumberIncrease = [...arrayNumbers];
         arrayNumberIncrease[chosenNumber - 1]++;
         setArrayNumbers(arrayNumberIncrease);
@@ -180,6 +194,7 @@ export default function Game({ level }) {
           updatedWrongCells.splice(index, 1);
           setWrongCells(updatedWrongCells);
         }
+        handleFastPencil();
       } else {
         setBoard(newArray);
         if (!wrongCells.includes(`${row}-${col}`)) {
@@ -193,8 +208,8 @@ export default function Game({ level }) {
     }
   };
 
-  //Hint backtracking function
-  const hintBackTracking = (array) => {
+  //Backtracking function
+  const backTracking = (array) => {
     const optionsNumber = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     for (let row = 0; row < 9; row++) {
       for (let col = 0; col < 9; col++) {
@@ -203,7 +218,7 @@ export default function Game({ level }) {
             if (checkMove(array, row, col, number)) {
               array[row][col] = number;
 
-              if (hintBackTracking(array)) {
+              if (backTracking(array)) {
                 return true;
               }
             }
@@ -214,6 +229,26 @@ export default function Game({ level }) {
       }
     }
     return true;
+  };
+
+  //Function puts in each empty cell every valid number that can get in it
+  // in pencil mode
+  const handleFastPencil = () => {
+    setFastPencilArray((prev) => {
+      const pencilTemp = [...prev];
+      for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+          const index = row * 9 + col; // Calculate the cell index in the array
+          pencilTemp[index] = [];
+          for (let number of numbers) {
+            if (checkMove(board, row, col, number)) {
+              pencilTemp[index].push(number);
+            }
+          }
+        }
+      }
+      return pencilTemp;
+    });
   };
 
   // Player presses the hint button
@@ -233,7 +268,7 @@ export default function Game({ level }) {
       for (let number of optionsNumbers) {
         if (checkMove(boardArray, row, col, number)) {
           boardArray[row][col] = number;
-          if (hintBackTracking(boardArray)) {
+          if (backTracking(boardArray)) {
             const finalBoard = [...board];
             finalBoard[row][col] = number;
             setBoard(finalBoard);
@@ -274,6 +309,15 @@ export default function Game({ level }) {
     initialize();
   }, []);
 
+  // Calls fast pencil function
+  useEffect(() => {
+    if (fastPencil === true) {
+      handleFastPencil();
+    } else {
+      setFastPencilArray(Array(81).fill([]));
+    }
+  }, [fastPencil]);
+
   return (
     <>
       <h1 className="headerGame">Sudoku</h1>
@@ -288,6 +332,7 @@ export default function Game({ level }) {
           changeHint={setHint}
           hintValue={hintCount}
           changeHintCount={setHintCount}
+          changeFastPencil={setFastPencil}
         />
       )}
       {startTimer && (
@@ -332,11 +377,20 @@ export default function Game({ level }) {
                       {Array.from({ length: 3 }, (_, subRow) =>
                         Array.from({ length: 3 }, (_, subCol) => {
                           const subIndex = subRow * 3 + subCol;
-                          const pencilValue = pencilArray[
-                            rowIndex * 9 + colIndex
-                          ]?.includes(subIndex + 1)
-                            ? subIndex + 1
-                            : "";
+                          let pencilValue = "";
+                          if (fastPencil) {
+                            pencilValue = fastPencilArray[
+                              rowIndex * 9 + colIndex
+                            ]?.includes(subIndex + 1)
+                              ? subIndex + 1
+                              : "";
+                          } else {
+                            pencilValue = pencilArray[
+                              rowIndex * 9 + colIndex
+                            ]?.includes(subIndex + 1)
+                              ? subIndex + 1
+                              : "";
+                          }
                           return (
                             <div
                               key={`${subRow}-${subCol}`}
